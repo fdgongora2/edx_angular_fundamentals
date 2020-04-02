@@ -1,25 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { GitSearchService } from './git-search.service';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [GitSearchService]
 })
-export class AppComponentimplements implements OnInit {
+export class AppComponent implements OnInit {
+  /*
+   constructor (private GitSearchService : GitSearchService) {
 
-  private GitSearchServiceLocal: GitSearchService; 
-  constructor(GitSearchService2: GitSearchService) {
-    this.GitSearchServiceLocal = GitSearchService2;
+    es lo mismo que crear una variable en local y asignarle el valor que se recibe
+    yo lo voy a hacer de forma tradicional. Creo la variable y la asigno
 
+  */
+  private gitSearchLocal : GitSearchService;
+  constructor ( GitSS : GitSearchService) {
+    this.gitSearchLocal = GitSS;
   }
 
   ngOnInit() {
-    this.GitSearchServiceLocal.gitSearch('angular').then( (response) => {
+    this.gitSearchLocal.gitSearch('angular').then( (response) => {
       alert("Total Libraries Found:" + response.total_count);
     }, (error) => {
-      alert("Error: " + error.statusText)
+      alert("Error: " + error.statusText);
     })
   }
-  title = 'GitHub Browser';
+  title = 'app is functional!';
 }
