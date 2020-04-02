@@ -1,19 +1,28 @@
 <input name="query" placeholder="Enter Search Here" [(ngModel)]="searchQuery" />
 <button (click)="gitSearch()">Submit</button>
 <div *ngIf="resultadosBusqueda; else elseBlock">
-    <h3 class="total">Total Results: {{resultadosBusqueda.total_count}}</h3>
+  <div *ngIf="resultadosBusqueda.total_count > 0; else sinResultados">
+    <h3 class="total">Total Results: {{ resultadosBusqueda.total_count }}</h3>
     <ul class="list">
-      <li [ngStyle]="{'background-color' : (i % 2 === 0) ? 'silver' : 'white'}" class="list_item" 
-      *ngFor="let result of resultadosBusqueda.items; index as i;">
+      <li
+        [ngClass]="{ FondoPlateado: i % 2 === 0, FondoBlanco: i % 2 != 0 }"
+        class="list_item"
+        *ngFor="let result of resultadosBusqueda.items; index as i"
+      >
         <a [href]="result.html_url">
-          <img class="avatar" [src]="result.owner.avatar_url" /> 
-          <h4 class="title">{{result.name}} 
-            <small> by {{result.owner.login | uppercase}}</small> 
+          <img class="avatar" [src]="result.owner.avatar_url" />
+          <h4 class="title">
+            {{ result.name }}
+            <small> by {{ result.owner.login | uppercase }}</small>
           </h4>
-        </a> 
-        <p class="description"> {{result.description}}</p> 
-        <p> Created On: {{result.created_at | date:'fullDate'}} </p>
+        </a>
+        <p class="description">{{ result.description }}</p>
+        <p>Created On: {{ result.created_at | date: "fullDate" }}</p>
       </li>
     </ul>
   </div>
-  <ng-template #elseBlock>Loading...</ng-template>
+</div>
+
+<ng-template #sinResultados>
+    <div><h2>No hay resultados para la cadena de búsqueda </h2> </div> </ng-template>
+<ng-template #elseBlock>Loading...</ng-template>
