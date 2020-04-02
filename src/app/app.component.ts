@@ -20,11 +20,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    
+    // Buscamos el número de repositorios que lleven la palabra "angular"
     this.gitSearchLocal.gitSearch('angular').then( (response) => {
       alert("Total Libraries Found:" + response.total_count);
     }, (error) => {
       alert("Error: " + error.statusText);
     })
+
+    //Buscamos el número de repositorios que lleven el usuario fdgongora2
+    this.gitSearchLocal.gitSearchUser('gongora').then((response) => {
+      alert("Total de usuarios llamados gongora : "+response.total_count)
+    },
+    (error)=>{
+      alert("Error: " + error.statusText);
+    })
   }
+
   title = 'app is functional!';
 }
