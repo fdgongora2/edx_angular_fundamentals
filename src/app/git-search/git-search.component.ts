@@ -1,41 +1,41 @@
 import { Component, OnInit } from '@angular/core';
 import { GitSearchService } from '../git-search.service'
 import { GitSearch } from '../git-search'
-
+import { ActivatedRoute, ParamMap, Router } from '@angular/router'
 @Component({
   selector: 'app-git-search',
   templateUrl: './git-search.component.html',
   styleUrls: ['./git-search.component.css']
 })
 export class GitSearchComponent implements OnInit {
-
-  resultadosBusqueda : GitSearch;
-  searchQuery: string='';  
-
- /*  // Recordad que el parámetro del constructor se convierte en una variable local del objeto
-  // es una forma de declararla y asignarle el valor de la llamada */
-  constructor(private GitSearchService: GitSearchService) { }
-
-   /* Se ejecuta una vez al iniciarse el componente 
-   Como se ejecuta al mostrarse debemos indicarle un valor inicial
-   para la búsqueda */
+  searchResults: GitSearch;
+  searchQuery: string;
+  displayQuery: string;
+  title: string;
+  constructor(private GitSearchService: GitSearchService, private route: ActivatedRoute, private router: Router ) { }
 
   ngOnInit() {
-    this.GitSearchService.gitSearch('angular').then((response) => {
-      this.resultadosBusqueda = response;
+    this.route.paramMap.subscribe( (params: ParamMap) => {
+      this.searchQuery = params.get('query');
+      this.displayQuery = params.get('query');
+      this.gitSearch();  
+    })
+    this.route.data.subscribe( (result) => {
+      this.title = result.title
+    });
+  }
+
+  gitSearch = () => {
+    this.GitSearchService.gitSearch(this.searchQuery).then( (response) => {
+      this.searchResults = response;
     }, (error) => {
       alert("Error: " + error.statusText)
     })
   }
 
-/* al llamarse por haber pinchado el botón se busca el valor del formulario
-*/
-  gitSearch = () => {
-    this.GitSearchService.gitSearch(this.searchQuery).then((response) => {
-      this.resultadosBusqueda = response;
-    }, (error) => {
-      alert("Error: " + error.statusText)
-    })
+  sendQuery = () => {
+    this.searchResults = null;
+    this.router.navigate(['/search/' + this.searchQuery])
   }
 
 }
