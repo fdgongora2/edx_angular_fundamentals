@@ -12,13 +12,15 @@ export class GitSearchComponent implements OnInit {
   searchQuery: string;
   displayQuery: string;
   title: string;
+  pagina: string;  
   constructor(private GitSearchService: GitSearchService, private route: ActivatedRoute, private router: Router ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe( (params: ParamMap) => {
       this.searchQuery = params.get('query');
       this.displayQuery = params.get('query');
-      this.gitSearch();  
+      this.pagina = params.get('page');
+      this.gitSearch();        
     })
     this.route.data.subscribe( (result) => {
       this.title = result.title
@@ -26,7 +28,7 @@ export class GitSearchComponent implements OnInit {
   }
 
   gitSearch = () => {
-    this.GitSearchService.gitSearch(this.searchQuery).then( (response) => {
+    this.GitSearchService.gitSearch(this.searchQuery, this.pagina).then( (response) => {
       this.searchResults = response;
     }, (error) => {
       alert("Error: " + error.statusText)
@@ -34,8 +36,11 @@ export class GitSearchComponent implements OnInit {
   }
 
   sendQuery = () => {
-    this.searchResults = null;
-    this.router.navigate(['/search/' + this.searchQuery])
+
+   // this.searchResults = null;
+    this.pagina = '1'; 
+    this.router.navigate(['/search/' + this.searchQuery + '/' + this.pagina])
+   
   }
 
 }
