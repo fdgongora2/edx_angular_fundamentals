@@ -27,11 +27,11 @@ export class GitSearchService {
 
 
   constructor(private http: HttpClient) {
-    console.log('ENTRA EN CONSTRUCTOR .... :');
+  
   }
 
-  gitSearch = (query: string, page: string): Promise<GitSearch> => {
-    console.log('ENTRA EN SERVICIO .... :');
+  gitSearch = (query: string, page: number): Promise<GitSearch> => {
+  
     let promise = new Promise<GitSearch>((resolve, reject) => {
         if (this.cachedValues[query+page]) {        
             resolve(this.cachedValues[query+page])
