@@ -8,7 +8,7 @@
       formControlName="{{key}}"
     />
   </div>
-  <button type="submit">Submit</button>
+  <button type="submit" [disabled]="!form.valid">Submit</button>
 </form>
 <div *ngIf="searchResults; else elseBlock">
   <div class="capaFlex">
