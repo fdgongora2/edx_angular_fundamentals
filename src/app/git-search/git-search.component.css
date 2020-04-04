@@ -37,7 +37,7 @@
     justify-content: space-between;
     flex-direction: row-reverse;
 }
-.ng-valid  {
+.ng-valid:not(form)  {
     border: 2px solid #42A948; /* green */
   }
   
