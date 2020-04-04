@@ -1,30 +1,33 @@
 <h3>{{ title }}</h3>
-<form (ngSubmit)="sendQuery()">
-  {{ key }}
-  <input
-    name="{{ key }}"
-    placeholder="Enter {{ key }} Here"
-    [(ngModel)]="model[key]"
-    required
-    *ngIf="key === 'q'"
-    appNoSpecialChars
-  />
-  <input
-    name="{{ key }}"
-    placeholder="Enter {{ key }} Here"
-    [(ngModel)]="model[key]"
-    minlength="2"
-    maxlength="4"
-    *ngIf="key === 'stars'"
-    appNoSpecialChars
-  />
-  <input
-    name="{{ key }}"
-    placeholder="Enter {{ key }} Here"
-    [(ngModel)]="model[key]"
-    *ngIf="key !== 'q' && key !== 'stars'"
-    appNoSpecialChars
-  />
+<form (ngSubmit)="sendQuery()" #myForm="ngForm" >
+  <div *ngFor="let key of modelKeys">
+    {{ key }}
+    <input
+      name="{{ key }}"
+      placeholder="Enter {{ key }} Here"
+      [(ngModel)]="model[key]"
+      required
+      *ngIf="key === 'q'"
+      appNoSpecialChars
+    />
+    <input
+      name="{{ key }}"
+      placeholder="Enter {{ key }} Here"
+      [(ngModel)]="model[key]"
+      minlength="2"
+      maxlength="4"
+      *ngIf="key === 'stars'"
+      appNoSpecialChars
+    />
+    <input
+      name="{{ key }}"
+      placeholder="Enter {{ key }} Here"
+      [(ngModel)]="model[key]"
+      *ngIf="key !== 'q' && key !== 'stars'"
+      appNoSpecialChars
+    />
+    <div *ngIf="model[key].errors.required">Field {{ key }} is required.</div>
+  </div>
   <button type="submit" [disabled]="!myForm.valid">Submit</button>
 </form>
 <div *ngIf="searchResults; else elseBlock">
