@@ -44,7 +44,8 @@ const appRoutes: Routes = [
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true }
-    ) 
+    ) ,    
+    ReactiveFormsModule
   ],
   providers: [GitSearchService],
   bootstrap: [AppComponent]
