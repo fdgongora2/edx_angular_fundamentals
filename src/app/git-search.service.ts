@@ -3,7 +3,9 @@ import { GitSearch } from './git-search';
 import { GitUser } from './git-user';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import 'rxjs';
+import { Observable } from 'rxjs';
+import { exhaustMap, scan, mapTo, map, publishReplay, startWith, refCount, first, filter, switchMap } from 'rxjs/operators';
+
 /* 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -17,66 +19,52 @@ const httpOptions = {
 export class GitSearchService {
   private cadenahttp: string;
 
-  cachedValues: Array<{
-    [query: string]: GitSearch
-  }> = [];
+  cachedValue: string;
 
   cachedValuesUser: Array<{
     [user: string]: GitUser
   }> = [];
 
+  search: Observable<GitSearch>;
 
   constructor(private http: HttpClient) {
-  
   }
 
-  gitSearch = (query: string, page: number): Promise<GitSearch> => {
-  
-    let promise = new Promise<GitSearch>((resolve, reject) => {
-        if (this.cachedValues[query+page]) {        
-            resolve(this.cachedValues[query+page])
-        }
-        else {                    
-          if (page === null)
-            {
-              this.cadenahttp = query;
-            }
-            else
-            {
-              this.cadenahttp = query + '&page=' + page;
-            }
-            console.log('CADENA ' + this.cadenahttp);
+  gitSearch: Function = (query: string, page: number): Observable<GitSearch> => {
 
-            this.http.get('https://api.github.com/search/repositories?q=' + this.cadenahttp)
-            .toPromise()
-            .then( (response) => {
-                this.cachedValues[query+page] = (response as GitSearch);
-                resolve(response as GitSearch)
-            }, (error) => {
-                reject(error);
-            })
-        }
-    })
-    return promise;
+    if (page === null) {
+      this.cadenahttp = query;
+    }
+    else {
+      this.cadenahttp = query + '&page=' + page;
+    }
+
+      this.search = this.http.get<GitSearch>('https://api.github.com/search/repositories?q=' + this.cadenahttp).pipe(        
+        publishReplay(1),
+        refCount());
+      this.cachedValue = query;      
+    
+    return this.search;
   }
 
+  /*
   gitSearchUser = (user: string): Promise<GitUser> => {
     let promise = new Promise<GitUser>((resolve, reject) => {
-        if (this.cachedValuesUser[user]) {
-            resolve(this.cachedValuesUser[user])
-        }
-        else {
-            this.http.get('https://api.github.com/search/users?q=' + user)
-            .toPromise()
-            .then( (response) => {
-                resolve(response as GitUser)
-            }, (error) => {
-                reject(error);
-            })
-        }
+      if (this.cachedValuesUser[user]) {
+        resolve(this.cachedValuesUser[user])
+      }
+      else {
+        this.http.get('https://api.github.com/search/users?q=' + user)
+          .toPromise()
+          .then((response) => {
+            resolve(response as GitUser)
+          }, (error) => {
+            reject(error);
+          })
+      }
     })
     return promise;
   }
-
+*/
 
 }

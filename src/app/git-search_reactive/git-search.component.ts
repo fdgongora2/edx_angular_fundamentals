@@ -76,10 +76,11 @@ export class GitSearchComponent implements OnInit {
   checkType = (key) => {
     return typeof key === 'string' ? 'text' : typeof key;
   }
-  
+
   gitSearch = () => {
     this.GitSearchService.gitSearch(this.searchQuery, this.pagina).then((response) => {
       this.searchResults = response;
+      console.log(response);
     }, (error) => {
       alert("Error: " + error.statusText)
     })
