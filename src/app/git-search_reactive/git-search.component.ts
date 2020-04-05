@@ -19,6 +19,7 @@ export class GitSearchComponent implements OnInit {
   // Objeto que contendrá todos los campos del formulario
   form: FormGroup;
   formControls = {};
+  type: Array<any> = [];
   constructor(private GitSearchService: GitSearchService, private route: ActivatedRoute, private router: Router) {
 
     this.modelKeys.forEach((key) => {
@@ -29,6 +30,12 @@ export class GitSearchComponent implements OnInit {
       if (key === 'stars') {
         validators.push(Validators.maxLength(4))
       }
+
+      if (typeof (this.model[key]) === 'string'){
+        this.type.push('text');
+      } else 
+        this.type.push('number');
+
       validators.push(this.noSpecialChars);
       this.formControls[key] = new FormControl(this.model[key], validators);
     })
@@ -66,6 +73,10 @@ export class GitSearchComponent implements OnInit {
     });
   }
 
+  checkType = (key) => {
+    return typeof key === 'string' ? 'text' : typeof key;
+  }
+  
   gitSearch = () => {
     this.GitSearchService.gitSearch(this.searchQuery, this.pagina).then((response) => {
       this.searchResults = response;
