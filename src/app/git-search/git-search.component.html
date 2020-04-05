@@ -5,7 +5,7 @@ https://angular.io/guide/dynamic-form que describe la creación dinámica de
 formulario con un ejemplo uitilizando el componente FormGroup -->
 
 <form #myForm="ngForm" (ngSubmit)="sendQuery()">
-  <div *ngFor="let key of modelKeys; let i=index">
+  <div *ngFor="let key of modelKeys; let i = index">
     {{ key }}
     <!-- IMPORTANTE, si utilizamos la nomenclatura #campo="ngModel"
          para conseguir una variable que nos permita hacer validaciones. Tenemos
@@ -13,6 +13,7 @@ formulario con un ejemplo uitilizando el componente FormGroup -->
       es accesible dentro del template. El problema es que si usamos un *ngIf o *ngFor
       se crea un template en esa zona y hace inaccesible la variable fuera. Por eso debemos
     crear un div para los campos especiales  -->
+
     <div *ngIf="key === 'q'">
       <input
         #campoQ="ngModel"
@@ -21,10 +22,13 @@ formulario con un ejemplo uitilizando el componente FormGroup -->
         [(ngModel)]="model[key]"
         required
         appNoSpecialChars
-        type="{{tiposCampoFormulario[i]}}"
+        type="{{ tiposCampoFormulario[i] }}"
       />
-      <div [hidden]="campoQ.valid" class="alert alert-danger">
+      <div [hidden]="!(campoQ.invalid && campoQ.errors.required)" class="alert alert-danger">
         Field 'q' is required
+      </div>
+      <div [hidden]="!(campoQ.invalid && campoQ.errors.hasSpecialChars)" class="alert alert-danger">
+        No special chars
       </div>
     </div>
 
@@ -37,30 +41,40 @@ formulario con un ejemplo uitilizando el componente FormGroup -->
         minlength="2"
         maxlength="4"
         appNoSpecialChars
-        type="{{tiposCampoFormulario[i]}}"
+        type="{{ tiposCampoFormulario[i] }}"
       />
-      <div *ngIf="key === 'stars' && campoStars.invalid && campoStars.errors.maxlength">
+      <div
+        *ngIf="
+          key === 'stars' && campoStars.invalid && campoStars.errors.maxlength
+        "
+      >
         Maxlength should be 4
       </div>
-      <div [hidden]="campoStars.valid " class="alert alert-danger">
-        Field 'stars' must have more than 1 and less than 5 characters
-       </div>
+      <div
+        *ngIf="
+          key === 'stars' && campoStars.invalid && campoStars.errors.minlength
+        "
+      >
+        Minlength should be 2
+      </div>
+      <div [hidden]="!(campoStars.invalid && campoStars.errors.hasSpecialChars)" class="alert alert-danger">
+        No special chars
+      </div>
     </div>
 
     <div *ngIf="key !== 'q' && key !== 'stars'">
-    <input
-      name="{{ key }}"
-      #campo="ngModel"
-      placeholder="Enter {{ key }} Here"      
-      [(ngModel)]="model[key]"      
-      appNoSpecialChars
-      type="{{tiposCampoFormulario[i]}}"
-    />
-    <div [hidden]="campo.valid" class="alert alert-danger">
-      No special chars
+      <input
+        name="{{ key }}"
+        #campo="ngModel"
+        placeholder="Enter {{ key }} Here"
+        [(ngModel)]="model[key]"
+        appNoSpecialChars
+        type="{{ tiposCampoFormulario[i] }}"
+      />
+      <div [hidden]="!(campo.invalid && campo.errors.hasSpecialChars)" class="alert alert-danger">
+        No special chars
+      </div>
     </div>
-  
-  </div>
   </div>
   <button type="submit" [disabled]="!myForm.valid">Submit</button>
 </form>
