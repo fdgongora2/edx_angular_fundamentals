@@ -14,13 +14,23 @@ export class GitSearchComponent implements OnInit {
   displayQuery: string;
   title: string;
   pagina: number;  
-  constructor(private GitSearchService: GitSearchService, private route: ActivatedRoute, private router: Router ) { }
-
+  constructor(private GitSearchService: GitSearchService, private route: ActivatedRoute, private router: Router ) { 
+ 
+  }
   model = new AdvancedSearchModel('', '', '', null, null, '');
   // Creamos un array con los atributos del objeto 'model' para procesarlo con *ngFor
   modelKeys = Object.keys(this.model);
-
+  // Creamos un array que almacene el tipo de dato para los inputs
+  tiposCampoFormulario: Array<any> = [];
   ngOnInit() {
+    
+    this.modelKeys.forEach((key) => {      
+      if (typeof (this.model[key]) === 'string'){
+        this.tiposCampoFormulario.push('text');
+      } else 
+        this.tiposCampoFormulario.push('number');    
+    });
+
     this.route.paramMap.subscribe( (params: ParamMap) => {
       this.searchQuery = params.get('query');
       this.displayQuery = params.get('query');

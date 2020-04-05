@@ -1,13 +1,69 @@
 <h3>{{ title }}</h3>
+
+<!-- Una forma más trabajada y eficiente se describe en el manual de Angulare en 
+https://angular.io/guide/dynamic-form que describe la creación dinámica de
+formulario con un ejemplo uitilizando el componente FormGroup -->
+
 <form #myForm="ngForm" (ngSubmit)="sendQuery()">
-  <div *ngFor="let key of modelKeys">
-      {{key}}
-      <input name="{{key}}" placeholder="Enter {{key}} Here" [(ngModel)]="model[key]" required *ngIf="key === 'q'" appNoSpecialChars />
-      <input name="{{key}}" placeholder="Enter {{key}} Here" [(ngModel)]="model[key]" minlength='2' maxlength='4' *ngIf="key === 'stars'" appNoSpecialChars />
-      <input name="{{key}}" placeholder="Enter {{key}} Here" [(ngModel)]="model[key]" *ngIf="key !== 'q' && key !== 'stars'" appNoSpecialChars />
+  <div *ngFor="let key of modelKeys; let i=index">
+    {{ key }}
+    <!-- IMPORTANTE, si utilizamos la nomenclatura #campo="ngModel"
+         para conseguir una variable que nos permita hacer validaciones. Tenemos
+        que tener presente que esa variable que nos permite acceder al elemento sólo
+      es accesible dentro del template. El problema es que si usamos un *ngIf o *ngFor
+      se crea un template en esa zona y hace inaccesible la variable fuera. Por eso debemos
+    crear un div para los campos especiales  -->
+    <div *ngIf="key === 'q'">
+      <input
+        #campoQ="ngModel"
+        name="campoQ"
+        placeholder="Enter {{ key }} Here"
+        [(ngModel)]="model[key]"
+        required
+        appNoSpecialChars
+        type="{{tiposCampoFormulario[i]}}"
+      />
+      <div [hidden]="campoQ.valid" class="alert alert-danger">
+        Field 'q' is required
+      </div>
+    </div>
+
+    <div *ngIf="key === 'stars'">
+      <input
+        #campoStars="ngModel"
+        name="campoStars"
+        placeholder="Enter {{ key }} Here"
+        [(ngModel)]="model[key]"
+        minlength="2"
+        maxlength="4"
+        appNoSpecialChars
+        type="{{tiposCampoFormulario[i]}}"
+      />
+      <div *ngIf="key === 'stars' && campoStars.invalid && campoStars.errors.maxlength">
+        Maxlength should be 4
+      </div>
+      <div [hidden]="campoStars.valid " class="alert alert-danger">
+        Field 'stars' must have more than 1 and less than 5 characters
+       </div>
+    </div>
+
+    <div *ngIf="key !== 'q' && key !== 'stars'">
+    <input
+      name="{{ key }}"
+      #campo="ngModel"
+      placeholder="Enter {{ key }} Here"      
+      [(ngModel)]="model[key]"      
+      appNoSpecialChars
+      type="{{tiposCampoFormulario[i]}}"
+    />
+    <div [hidden]="campo.valid" class="alert alert-danger">
+      No special chars
+    </div>
+  
+  </div>
   </div>
   <button type="submit" [disabled]="!myForm.valid">Submit</button>
-  </form> 
+</form>
 <div *ngIf="searchResults; else elseBlock">
   <div class="capaFlex">
     <!-- En sentido inverso row-reverse -->
